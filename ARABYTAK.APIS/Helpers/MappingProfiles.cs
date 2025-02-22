@@ -1,6 +1,7 @@
 ﻿using Arabytak.Core.Entities;
 using ARABYTAK.APIS.DTOs;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 namespace ARABYTAK.APIS.Helpers
 {
@@ -27,6 +28,8 @@ namespace ARABYTAK.APIS.Helpers
                 .ForMember(c => c.Url, d => d.MapFrom(s => s.Url.Select(u => new CarPictureDto { Url = u.PictureUrl }).ToList()))
             .ForMember(dest => dest.Url, opt => opt.MapFrom<PictureUrlResolver>());
 
+            CreateMap<RoleDto, IdentityRole>();
+            CreateMap<AdvertismentDto, Advertisement>().ReverseMap();
 
         }
     }

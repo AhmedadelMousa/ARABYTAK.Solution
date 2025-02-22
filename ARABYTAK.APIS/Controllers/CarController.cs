@@ -12,6 +12,7 @@ using Microsoft.Identity.Client;
 
 namespace ARABYTAK.APIS.Controllers
 {
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
 
     public class CarController : BaseApiController
     {
@@ -93,9 +94,9 @@ namespace ARABYTAK.APIS.Controllers
 
             return Ok(carDto);
         }
-        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("{status}")]
-        
+
+
+        [HttpGet("{status}") ]
         public async Task<ActionResult<CarListDto>> GetListOfCar([FromQuery] Status status)
         {
            

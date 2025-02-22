@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace ARABYTAK.APIS
@@ -28,9 +30,39 @@ namespace ARABYTAK.APIS
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddScoped(typeof(IUnitOfWork),typeof(UnitOfWork));
+            builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
             builder.Services.AddScoped(typeof(IAuthService), typeof(AuthService));
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(Options =>
+            {
+
+                Options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authentication",
+                    Description = "Authentication Based On JWT Token Bearer <Your_Token>",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+
+                Options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Id   = "Bearer",
+                            Type = ReferenceType.SecurityScheme,
+                        }
+                    },
+                    new string[] { }
+
+                }
+            });
+            });
+        
+
             builder.Services.AddDbContext<ArabytakContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));// second Step to connection db , to use AddDbContext We need use take reference from Repository To read library
             builder.Services.AddDbContext<AppIdentityDbContext>(option =>
             {
@@ -80,10 +112,10 @@ namespace ARABYTAK.APIS
                 var LoggerFactory=Services.GetRequiredService<ILoggerFactory>();
                 try
                 {
-                    await _dbContext.Database.MigrateAsync();//update DataBase
-                    await ArabytakContextSeed.SeedAsync(_dbContext);// SeedData
-                    await _identityDbContext.Database.MigrateAsync();
-                await AppIdentityDbContextSeed.SeedUserAsync(_userManager);//seed user 
+                  await _dbContext.Database.MigrateAsync();//update DataBase
+                  await ArabytakContextSeed.SeedAsync(_dbContext);// SeedData
+                  await _identityDbContext.Database.MigrateAsync();
+                  await AppIdentityDbContextSeed.SeedUserAsync(_userManager);//seed user 
                 }
                 catch (Exception ex) 
                 {
@@ -101,11 +133,12 @@ namespace ARABYTAK.APIS
 
                 app.UseHttpsRedirection();
 
+                app.UseAuthentication();
                 app.UseAuthorization();
                 app.UseStaticFiles();
 
 
-            app.MapControllers();
+              app.MapControllers();
 
                 app.Run();
             }

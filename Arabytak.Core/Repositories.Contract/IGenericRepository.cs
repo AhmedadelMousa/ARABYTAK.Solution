@@ -19,5 +19,6 @@ namespace Arabytak.Core.Repositories.Contract
         void UpdateAsync(T entity);
         void DeleteAsync(T entity);
         Task<int> GetCountAsync(ISpecification<T> spec);
+        Task<T> GetById(int id);
     }
 }
