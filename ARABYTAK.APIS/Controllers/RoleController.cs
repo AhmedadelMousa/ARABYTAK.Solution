@@ -11,7 +11,7 @@ namespace ARABYTAK.APIS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin" , AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+   // [Authorize(Roles = "Admin" , AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RoleController : BaseApiController
     {
 

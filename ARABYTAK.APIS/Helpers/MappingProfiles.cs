@@ -29,8 +29,8 @@ namespace ARABYTAK.APIS.Helpers
             .ForMember(dest => dest.Url, opt => opt.MapFrom<PictureUrlResolver>());
 
             CreateMap<RoleDto, IdentityRole>();
-            CreateMap<AdvertismentDto, Advertisement>().ReverseMap();
-
+            CreateMap<AdvertismentDto, Advertisement>();
+               
         }
     }
 }
